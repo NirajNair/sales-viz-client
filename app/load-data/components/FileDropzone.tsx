@@ -1,5 +1,6 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
 import { AlertCircle, FileSpreadsheet, Loader2, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -110,9 +111,7 @@ export function FileDropzone({
 
               <div>
                 <p className="text-base font-medium text-foreground sm:text-lg">
-                  {isDragActive
-                    ? "Drop the Excel file here"
-                    : "Drag & drop your Excel file here"}
+                  Drop the Excel file here
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
                   or click to browse files
@@ -129,13 +128,16 @@ export function FileDropzone({
       </div>
 
       {displayError && (
-        <div className="mt-4 flex items-start gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
-          <div>
-            <p className="text-sm font-medium text-destructive">Upload Error</p>
-            <p className="mt-1 text-sm text-muted-foreground">{displayError}</p>
-          </div>
-        </div>
+        <Alert
+          variant="destructive"
+          className="w-full bg-red-300/10 border-red-500/30 mt-5"
+        >
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle className="text-sm">Upload Error</AlertTitle>
+          <AlertDescription className="text-xs mt-1">
+            <p className="text-xs">{displayError}</p>
+          </AlertDescription>
+        </Alert>
       )}
     </div>
   );

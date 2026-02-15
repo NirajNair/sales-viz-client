@@ -79,6 +79,7 @@ export function createMappingsFromResponse(
         shouldSplit: shouldSplit,
         delimiter: delimiter,
         mappedTo: suggestion.suggestion.mapTo,
+        dateFormat: null,
         parts: parts,
       };
     }
@@ -90,6 +91,7 @@ export function createMappingsFromResponse(
       shouldSplit: false,
       delimiter: null,
       mappedTo: null,
+      dateFormat: null,
       parts: [],
     };
   });

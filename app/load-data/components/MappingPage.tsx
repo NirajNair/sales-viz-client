@@ -18,7 +18,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { loadData } from "@/lib/api/load-data";
-import { MANDATORY_FIELDS } from "@/lib/constants";
+import { DATE_FIELDS, MANDATORY_FIELDS } from "@/lib/constants";
 import {
   DndContext,
   DragEndEvent,
@@ -90,6 +90,40 @@ function getMissingMandatoryFields(mappings: ColumnMapping[]): string[] {
   return MANDATORY_FIELDS.filter((field) => !mappedFields.has(field));
 }
 
+// Get mapped date fields that are missing format selection
+function getMissingDateFormats(
+  mappings: ColumnMapping[],
+): Array<{ field: string; column: string; partIndex?: number }> {
+  const missingFormats: Array<{
+    field: string;
+    column: string;
+    partIndex?: number;
+  }> = [];
+
+  mappings.forEach((m) => {
+    // Check main column mapping
+    if (m.mappedTo && DATE_FIELDS.includes(m.mappedTo) && !m.dateFormat) {
+      missingFormats.push({
+        field: m.mappedTo,
+        column: m.excelHeader,
+      });
+    }
+
+    // Check split parts
+    m.parts.forEach((part, idx) => {
+      if (part.mapTo && DATE_FIELDS.includes(part.mapTo) && !part.dateFormat) {
+        missingFormats.push({
+          field: part.mapTo,
+          column: m.excelHeader,
+          partIndex: idx,
+        });
+      }
+    });
+  });
+
+  return missingFormats;
+}
+
 export function MappingPage() {
   const { uploadedFile, mappings, setMappings, setCurrentStep } = useUpload();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -132,8 +166,15 @@ export function MappingPage() {
     [mappings],
   );
 
+  const missingDateFormats = useMemo(
+    () => getMissingDateFormats(mappings),
+    [mappings],
+  );
+
   const hasValidationErrors =
-    missingMandatoryFields.length > 0 || duplicateFields.length > 0;
+    missingMandatoryFields.length > 0 ||
+    duplicateFields.length > 0 ||
+    missingDateFormats.length > 0;
 
   const mandatoryFieldsMapped =
     MANDATORY_FIELDS.length - missingMandatoryFields.length;
@@ -356,6 +397,7 @@ export function MappingPage() {
                   onRemovePartMapping={(partIndex: number) =>
                     handleRemovePartMapping(mapping.excelColumnIndex, partIndex)
                   }
+                  showValidationErrors={validationAttempted}
                 />
               ))}
             </div>
@@ -383,7 +425,10 @@ export function MappingPage() {
 
             {/* Error alert for duplicate fields - full width */}
             {validationAttempted && duplicateFields.length > 0 && (
-              <Alert variant="destructive" className="w-full">
+              <Alert
+                variant="destructive"
+                className="w-full bg-red-300/10 border-red-500/30"
+              >
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle className="text-sm">
                   Duplicate Field Mappings
@@ -395,6 +440,35 @@ export function MappingPage() {
                       {duplicateFields.join(", ")}
                     </span>
                   </p>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* Error alert for missing date formats - full width */}
+            {validationAttempted && missingDateFormats.length > 0 && (
+              <Alert
+                variant="destructive"
+                className="w-full bg-red-300/10 border-red-500/30"
+              >
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle className="text-sm">
+                  Missing Date Formats
+                </AlertTitle>
+                <AlertDescription className="text-xs mt-1">
+                  <p className="text-xs">
+                    Date format selection is required for the following
+                    mappings:{" "}
+                  </p>
+                  <ul className="mt-1 space-y-0.5">
+                    {missingDateFormats.map((item, idx) => (
+                      <li key={idx} className="font-mono text-xs">
+                        {item.field} in column "{item.column}"
+                        {item.partIndex !== undefined
+                          ? ` (part ${item.partIndex + 1})`
+                          : ""}
+                      </li>
+                    ))}
+                  </ul>
                 </AlertDescription>
               </Alert>
             )}

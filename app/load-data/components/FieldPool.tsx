@@ -1,15 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useDraggable } from "@dnd-kit/core";
-import { Search, GripVertical, Database } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import {
-  FIELD_POOL,
-  getAllFields,
-  MANDATORY_FIELDS,
-} from "../types/get-mappings";
+import { FIELD_POOL, MANDATORY_FIELDS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { useDraggable } from "@dnd-kit/core";
+import { Database, GripVertical, Search } from "lucide-react";
+import { useState } from "react";
+import { getAllFields } from "../types/get-mappings";
 
 interface DraggableFieldProps {
   field: string;

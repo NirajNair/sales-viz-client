@@ -27,6 +27,7 @@ export interface MappingPart {
   index: number;
   name: string;
   mapTo: string;
+  dateFormat?: string | null;
 }
 
 export interface ColumnMapping {
@@ -36,6 +37,7 @@ export interface ColumnMapping {
   shouldSplit: boolean;
   delimiter: string | null;
   mappedTo: string | null;
+  dateFormat: string | null;
   parts: MappingPart[];
 }
 
