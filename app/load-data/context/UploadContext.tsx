@@ -1,13 +1,17 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import { GetMappingsResponse, ColumnMapping } from "../types/get-mappings";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useState,
+} from "react";
+import { ColumnMapping } from "../types/get-mappings";
 
 interface UploadContextType {
   uploadedFile: File | null;
   setUploadedFile: (file: File | null) => void;
-  uploadResponse: GetMappingsResponse | null;
-  setUploadResponse: (response: GetMappingsResponse | null) => void;
   mappings: ColumnMapping[];
   setMappings: (mappings: ColumnMapping[]) => void;
   currentStep: number;
@@ -19,25 +23,20 @@ const UploadContext = createContext<UploadContextType | undefined>(undefined);
 
 export function UploadProvider({ children }: { children: ReactNode }) {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [uploadResponse, setUploadResponse] =
-    useState<GetMappingsResponse | null>(null);
   const [mappings, setMappings] = useState<ColumnMapping[]>([]);
   const [currentStep, setCurrentStep] = useState(1);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     setUploadedFile(null);
-    setUploadResponse(null);
     setMappings([]);
     setCurrentStep(1);
-  };
+  }, []);
 
   return (
     <UploadContext.Provider
       value={{
         uploadedFile,
         setUploadedFile,
-        uploadResponse,
-        setUploadResponse,
         mappings,
         setMappings,
         currentStep,

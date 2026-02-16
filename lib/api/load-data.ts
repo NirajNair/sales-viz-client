@@ -29,11 +29,9 @@ export async function loadData(
   file: File,
   mappings: ColumnMapping[],
 ): Promise<{ message: string }> {
-  console.log("Saving mappings", mappings);
   const formData = new FormData();
   formData.append("file", file);
   formData.append("mappings", JSON.stringify(mappings));
-  console.log("mappings", mappings);
 
   const response = await fetch(`${config.apiBaseUrl}/api/load-data`, {
     method: "POST",

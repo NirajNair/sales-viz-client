@@ -1,21 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { createMappingsFromResponse, getMappings } from "@/lib/api/load-data";
 import { useMutation } from "@tanstack/react-query";
-import { FileDropzone } from "./FileDropzone";
+import { useEffect, useState } from "react";
 import { useUpload } from "../context/UploadContext";
-import { getMappings, createMappingsFromResponse } from "@/lib/api/load-data";
+import { FileDropzone } from "./FileDropzone";
 
 export function UploadPage() {
-  const { setUploadedFile, setUploadResponse, setMappings, setCurrentStep } =
-    useUpload();
+  const { setUploadedFile, setMappings, setCurrentStep, reset } = useUpload();
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    reset();
+  }, [reset]);
 
   const uploadMutation = useMutation({
     mutationFn: getMappings,
     onSuccess: (data, file) => {
       setUploadedFile(file);
-      setUploadResponse(data);
       setMappings(createMappingsFromResponse(data));
       setCurrentStep(2);
     },
