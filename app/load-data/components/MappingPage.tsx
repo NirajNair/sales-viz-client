@@ -383,7 +383,7 @@ export function MappingPage() {
               </div>
               <div className="flex w-full justify-between items-center gap-4">
                 <div className="flex flex-col">
-                  <h2 className="text-xl font-semibold tracking-tight">
+                  <h2 className="text-xl font-semibold tracking-tight text-page-title">
                     Imported Columns
                   </h2>
                   <p className="mt-1 text-sm text-muted-foreground">

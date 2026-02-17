@@ -67,7 +67,7 @@ export default function UploadsPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-2xl font-bold mb-6">Uploads</h1>
+        <h1 className="text-2xl font-bold mb-6 text-page-title">Uploads</h1>
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
             <div
@@ -83,7 +83,7 @@ export default function UploadsPage() {
   if (error) {
     return (
       <div className="container mx-auto py-8 px-4">
-        <h1 className="text-2xl font-bold mb-6">Uploads</h1>
+        <h1 className="text-2xl font-bold mb-6 text-page-title">Uploads</h1>
         <div className="text-red-500">
           Failed to load uploads: {error.message}
         </div>
@@ -94,7 +94,7 @@ export default function UploadsPage() {
   return (
     <div className="container w-full">
       <div className="flex items-center gap-4 mb-6">
-        <h1 className="flex-1 text-2xl font-bold">Upload History</h1>
+        <h1 className="flex-1 text-2xl font-bold text-page-title">Upload History</h1>
         <div className="relative w-[30%]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input

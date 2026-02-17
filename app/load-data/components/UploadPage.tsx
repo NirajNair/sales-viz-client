@@ -38,7 +38,7 @@ export function UploadPage() {
   return (
     <section className="mx-auto max-w-4xl space-y-8">
       <div className="space-y-2 text-center">
-        <h2 className="text-3xl font-semibold tracking-tight text-foreground">
+        <h2 className="text-3xl font-semibold tracking-tight text-page-title">
           Upload Your Excel File
         </h2>
         <p className="mx-auto max-w-xl text-sm leading-6 text-muted-foreground sm:text-base">

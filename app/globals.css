@@ -140,3 +140,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .text-page-title {
+    color: var(--zinc-900);
+  }
+}
