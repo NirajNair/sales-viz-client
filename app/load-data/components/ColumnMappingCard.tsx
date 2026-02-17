@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 import { useDroppable } from "@dnd-kit/core";
 import { ChevronDown, ChevronUp, Merge, Split, X } from "lucide-react";
 import { useState } from "react";
-import { ColumnMapping, MappingPart } from "../types/get-mappings";
+import { ColumnMapping, MappingPart } from "../types/load-data";
 
 const isDateField = (fieldName: string | null): boolean => {
   if (!fieldName) return false;

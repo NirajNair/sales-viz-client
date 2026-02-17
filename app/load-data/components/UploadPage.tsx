@@ -9,6 +9,7 @@ import { FileDropzone } from "./FileDropzone";
 export function UploadPage() {
   const { setUploadedFile, setMappings, setCurrentStep, reset } = useUpload();
   const [error, setError] = useState<string | null>(null);
+  const [uploadingFile, setUploadingFile] = useState<File | null>(null);
 
   useEffect(() => {
     reset();
@@ -20,14 +21,17 @@ export function UploadPage() {
       setUploadedFile(file);
       setMappings(createMappingsFromResponse(data));
       setCurrentStep(2);
+      setUploadingFile(null);
     },
     onError: (err: Error) => {
       setError(err.message);
+      setUploadingFile(null);
     },
   });
 
   const handleFileSelect = (file: File) => {
     setError(null);
+    setUploadingFile(file);
     uploadMutation.mutate(file);
   };
 
@@ -46,6 +50,7 @@ export function UploadPage() {
       <FileDropzone
         onFileSelect={handleFileSelect}
         isUploading={uploadMutation.isPending}
+        uploadingFileName={uploadingFile?.name}
         error={error}
       />
     </section>

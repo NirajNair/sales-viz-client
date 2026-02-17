@@ -7,7 +7,7 @@ import {
   useContext,
   useState,
 } from "react";
-import { ColumnMapping } from "../types/get-mappings";
+import { ColumnMapping } from "../types/load-data";
 
 interface UploadContextType {
   uploadedFile: File | null;

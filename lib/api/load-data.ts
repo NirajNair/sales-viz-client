@@ -1,8 +1,9 @@
 import {
   ColumnMapping,
   GetMappingsResponse,
+  LoadDataResponse,
   MappingPart,
-} from "@/app/load-data/types/get-mappings";
+} from "@/app/load-data/types/load-data";
 import { config } from "@/lib/config";
 
 export async function getMappings(file: File): Promise<GetMappingsResponse> {
@@ -28,7 +29,7 @@ export async function getMappings(file: File): Promise<GetMappingsResponse> {
 export async function loadData(
   file: File,
   mappings: ColumnMapping[],
-): Promise<{ message: string }> {
+): Promise<LoadDataResponse> {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("mappings", JSON.stringify(mappings));
@@ -40,7 +41,7 @@ export async function loadData(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || "Failed to save mappings");
+    throw new Error(error.message || "Failed to load data");
   }
 
   return response.json();

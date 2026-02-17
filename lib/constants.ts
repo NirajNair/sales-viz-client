@@ -49,6 +49,7 @@ export const MANDATORY_FIELDS = [
   DbFields.BUYER_GSTIN,
   DbFields.PURCHASE_ASSESS_VAL,
   DbFields.HSN_CODE,
+  DbFields.PURCHASE_INVOICE_DATE,
 ] as const;
 
 export const DATE_FIELDS: string[] = [

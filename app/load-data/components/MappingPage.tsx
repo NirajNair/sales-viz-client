@@ -1,5 +1,6 @@
 "use client";
 
+import { DbFields } from "@/app/enums/db-fields.enum";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,13 +37,15 @@ import {
   ArrowLeft,
   ArrowRight,
   CheckCircle,
+  FileSpreadsheet,
   GripVertical,
   Loader2,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useUpload } from "../context/UploadContext";
-import { ColumnMapping } from "../types/get-mappings";
+import { ColumnMapping, LoadDataResponse } from "../types/load-data";
 import { ColumnMappingCard } from "./ColumnMappingCard";
 import { FieldPool } from "./FieldPool";
 
@@ -125,6 +128,7 @@ function getMissingDateFormats(
 }
 
 export function MappingPage() {
+  const router = useRouter();
   const { uploadedFile, mappings, setMappings, setCurrentStep } = useUpload();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [activeDragField, setActiveDragField] = useState<string | null>(null);
@@ -146,9 +150,10 @@ export function MappingPage() {
 
   const loadMutation = useMutation({
     mutationFn: () => loadData(uploadedFile!, mappings),
-    onSuccess: () => {
-      toast.success("Data loaded successfully!");
+    onSuccess: (data: LoadDataResponse) => {
+      toast.success(`Successfully loaded ${data.recordsStoredCount} records!`);
       setShowConfirmDialog(false);
+      router.push("/uploads");
     },
     onError: (error: Error) => {
       toast.error(error.message);
@@ -185,17 +190,16 @@ export function MappingPage() {
     const mappedFields = getAllMappedFields(mappings);
     const allFields = new Set([
       ...MANDATORY_FIELDS,
-      "purchase_records.invoice_no",
-      "purchase_records.invoice_date",
-      "purchase_records.state",
-      "purchase_records.ewb_no",
-      "purchase_records.ewb_date",
-      "purchase_records.tax_val",
-      "seller_entity.place",
-      "seller_entity.pin",
-      "buyer_entity.place",
-      "buyer_entity.pin",
-      "hsn_codes.chemical_name",
+      DbFields.PURCHASE_INVOICE_NO,
+      DbFields.PURCHASE_STATE,
+      DbFields.PURCHASE_EWB_NO,
+      DbFields.PURCHASE_EWB_DATE,
+      DbFields.PURCHASE_TAX_VAL,
+      DbFields.SELLER_PLACE,
+      DbFields.SELLER_PIN,
+      DbFields.BUYER_PLACE,
+      DbFields.BUYER_PIN,
+      DbFields.HSN_CHEMICAL_NAME,
     ]);
 
     return Array.from(allFields).filter(
@@ -359,20 +363,39 @@ export function MappingPage() {
         <div className="flex flex-1 flex-col overflow-hidden rounded-xl border bg-card">
           {/* Header */}
           <div className="border-b border-border/50 bg-gradient-to-b from-muted/20 to-card px-6 py-5">
-            <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col items-start justify-between gap-4">
               <div>
-                <h2 className="text-xl font-semibold tracking-tight">
-                  Imported Columns
-                </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Map your Excel headers to database fields
-                </p>
+                {uploadedFile && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center gap-2 mb-2 text-sm text-muted-foreground">
+                        <FileSpreadsheet className="h-4 w-4 shrink-0" />
+                        <span className="truncate max-w-[600px] overflow-hidden whitespace-nowrap">
+                          {uploadedFile.name}
+                        </span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{uploadedFile.name}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </div>
-              <div className="flex items-center gap-4 rounded-lg border border-border/50 bg-primary/5 px-4 py-2">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-foreground">
-                    {mappedCount} of {totalCount} columns mapped
+              <div className="flex w-full justify-between items-center gap-4">
+                <div className="flex flex-col">
+                  <h2 className="text-xl font-semibold tracking-tight">
+                    Imported Columns
+                  </h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Map your Excel headers to database fields
                   </p>
+                </div>
+                <div className="flex items-center gap-4 rounded-lg border border-border/50 bg-primary/5 px-4 py-2">
+                  <div className="text-right">
+                    <p className="text-sm font-medium text-foreground">
+                      {mappedCount} of {totalCount} columns mapped
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

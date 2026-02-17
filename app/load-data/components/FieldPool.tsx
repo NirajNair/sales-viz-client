@@ -6,8 +6,6 @@ import { cn } from "@/lib/utils";
 import { useDraggable } from "@dnd-kit/core";
 import { Database, GripVertical, Search } from "lucide-react";
 import { useState } from "react";
-import { getAllFields } from "../types/get-mappings";
-
 interface DraggableFieldProps {
   field: string;
   isUsed: boolean;
@@ -53,6 +51,10 @@ function DraggableField({ field, isUsed, isMandatory }: DraggableFieldProps) {
       )}
     </div>
   );
+}
+
+function getAllFields(): string[] {
+  return FIELD_POOL.flatMap((group) => group.fields);
 }
 
 interface FieldPoolProps {

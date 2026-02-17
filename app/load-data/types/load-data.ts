@@ -1,5 +1,3 @@
-import { FIELD_POOL } from "@/lib/constants";
-
 export interface ExcelColumn {
   index: number;
   header: string;
@@ -41,20 +39,6 @@ export interface ColumnMapping {
   parts: MappingPart[];
 }
 
-export interface SaveMappingsRequest {
-  file: File;
-  mappings: ColumnMapping[];
-}
-
-export function getAllFields(): string[] {
-  return FIELD_POOL.flatMap((group) => group.fields);
-}
-
-export function getFieldGroup(field: string): string | null {
-  for (const group of FIELD_POOL) {
-    if (group.fields.includes(field)) {
-      return group.name;
-    }
-  }
-  return null;
+export interface LoadDataResponse {
+  recordsStoredCount: number;
 }

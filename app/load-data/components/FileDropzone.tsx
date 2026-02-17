@@ -1,6 +1,11 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { AlertCircle, FileSpreadsheet, Loader2, Upload } from "lucide-react";
 import { useCallback, useState } from "react";
@@ -9,6 +14,7 @@ import { useDropzone, type FileRejection } from "react-dropzone";
 interface FileDropzoneProps {
   onFileSelect: (file: File) => void;
   isUploading: boolean;
+  uploadingFileName?: string;
   error: string | null;
 }
 
@@ -24,6 +30,7 @@ const ACCEPTED_TYPES = {
 export function FileDropzone({
   onFileSelect,
   isUploading,
+  uploadingFileName,
   error,
 }: FileDropzoneProps) {
   const [fileError, setFileError] = useState<string | null>(null);
@@ -74,7 +81,7 @@ export function FileDropzone({
           "relative cursor-pointer rounded-xl border border-dashed border-border bg-card px-6 py-14 transition-colors duration-200 sm:px-8",
           "hover:border-primary/50 hover:bg-muted/50",
           isDragActive && "border-primary bg-primary/5",
-          isUploading && "opacity-50 cursor-not-allowed",
+          isUploading && "cursor-not-allowed bg-muted/25",
         )}
       >
         <input {...getInputProps()} />
@@ -82,12 +89,20 @@ export function FileDropzone({
         <div className="flex flex-col items-center space-y-5 text-center">
           {isUploading ? (
             <>
-              <Loader2 className="h-10 w-10 animate-spin text-primary" />
-              <div>
-                <p className="text-base font-medium text-foreground sm:text-lg">
-                  Uploading file...
+              <Loader2 className="h-10 w-10 animate-spin text-muted-foreground" />
+              <div className="flex flex-col items-center space-y-2">
+                <p className="text-muted-foreground text-base font-medium sm:text-lg">
+                  Uploading file
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">
+                {uploadingFileName && (
+                  <div className="flex w-fit items-center justify-center gap-2 px-4 py-2 rounded-lg bg-muted/50 border border-border/50">
+                    <FileSpreadsheet className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <p className="text-sm font-medium text-muted-foreground truncate w-full">
+                      {uploadingFileName}
+                    </p>
+                  </div>
+                )}
+                <p className="text-sm text-muted-foreground mt-2">
                   Please wait while we process your file
                 </p>
               </div>
