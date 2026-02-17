@@ -1,28 +1,24 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { useSidebar } from "@/components/ui/sidebar";
+import { Menu } from "lucide-react";
 
-interface MobileHeaderProps {
-  isOpen: boolean;
-  onToggle: () => void;
-}
+export function MobileHeader() {
+  const { toggleSidebar } = useSidebar();
 
-export function MobileHeader({ isOpen, onToggle }: MobileHeaderProps) {
   return (
-    <header className="md:hidden fixed inset-x-0 top-0 z-40 w-full border-b bg-background">
-      <div className="flex flex-row-reverse h-14 items-center justify-between px-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggle}
-          className="mr-4"
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-        >
-          {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </Button>
-        <span className="font-semibold">Purchase Data Tool</span>
-      </div>
+    <header className="fixed top-0 left-0 right-0 z-50 flex h-14 items-center justify-between bg-zinc-900 px-4 md:hidden">
+      <span className="text-lg font-semibold text-zinc-50">Purchase Viz</span>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-9 text-zinc-50 hover:bg-zinc-800 hover:text-zinc-50"
+        onClick={toggleSidebar}
+        aria-label="Open menu"
+      >
+        <Menu className="size-5" />
+      </Button>
     </header>
   );
 }
