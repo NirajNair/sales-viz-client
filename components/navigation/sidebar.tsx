@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { Clock, PanelLeft, PanelLeftClose, Plus } from "lucide-react";
+import { Clock, PanelLeft, PanelLeftClose, Upload } from "lucide-react";
 import { useState } from "react";
 import { MobileHeader } from "./mobile-header";
 import { useSidebar } from "./sidebar-context";
@@ -16,7 +16,7 @@ import { SidebarItem } from "./sidebar-item";
 const navigation = [
   {
     href: "/load-data",
-    icon: Plus,
+    icon: Upload,
     label: "Load Data",
   },
   {
@@ -67,7 +67,7 @@ export function Sidebar() {
             <span
               className={cn("font-semibold truncate", isCollapsed && "hidden")}
             >
-              Purchase Data Tool
+              Purchase Viz
             </span>
             <Tooltip>
               <TooltipTrigger asChild>

@@ -53,7 +53,7 @@ export function UploadCard({ upload, onRevert, isReverting }: UploadCardProps) {
           </div>
         </div>
 
-        <div className="flex col-4 items-center gap-4">
+        <div className="flex flex-col-reverse col-4 items-end gap-2">
           <span className="text-xs text-muted-foreground">
             {formatDateToIST(upload.createdAt)}
           </span>
@@ -101,7 +101,7 @@ export function UploadCard({ upload, onRevert, isReverting }: UploadCardProps) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={handleCancelRevert}>
+            <Button variant="ghost" onClick={handleCancelRevert}>
               Cancel
             </Button>
             <Button variant="default" onClick={handleConfirmRevert}>
