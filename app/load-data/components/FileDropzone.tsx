@@ -1,11 +1,6 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { AlertCircle, FileSpreadsheet, Loader2, Upload } from "lucide-react";
 import { useCallback, useState } from "react";

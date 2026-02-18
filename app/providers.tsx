@@ -1,9 +1,10 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
-import { useState, ReactNode } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { ReactNode, useState } from "react";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -18,11 +19,13 @@ export function Providers({ children }: { children: ReactNode }) {
   );
 
   return (
-    <TooltipProvider>
-      <QueryClientProvider client={queryClient}>
-        {children}
-        <Toaster position="top-right" />
-      </QueryClientProvider>
-    </TooltipProvider>
+    <NuqsAdapter>
+      <TooltipProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+          <Toaster position="top-right" />
+        </QueryClientProvider>
+      </TooltipProvider>
+    </NuqsAdapter>
   );
 }

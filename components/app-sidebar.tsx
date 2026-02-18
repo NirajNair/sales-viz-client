@@ -1,6 +1,6 @@
 "use client";
 
-import { History, Upload } from "lucide-react";
+import { History, Table2, Upload } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -13,10 +13,19 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-const navigation = [
+const reportsNavigation = [
+  {
+    href: "/purchase-records",
+    icon: Table2,
+    label: "Purchase Records",
+  },
+];
+
+const dataNavigation = [
   {
     href: "/load-data",
     icon: Upload,
@@ -46,7 +55,38 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navigation.map((item) => {
+              {reportsNavigation.map((item) => {
+                const isActive =
+                  pathname === item.href ||
+                  pathname.startsWith(`${item.href}/`);
+                const Icon = item.icon;
+
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive}
+                      tooltip={item.label}
+                      className="text-base py-5 px-3 space-x-1"
+                    >
+                      <Link href={item.href}>
+                        <Icon className="size-5" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {dataNavigation.map((item) => {
                 const isActive =
                   pathname === item.href ||
                   pathname.startsWith(`${item.href}/`);
