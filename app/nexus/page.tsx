@@ -1,42 +1,40 @@
 "use client";
 
 import { getNexusDefaultDateRange, toUtcIso } from "@/lib/date-utils";
-import {
-  parseAsArrayOf,
-  parseAsString,
-  useQueryState,
-} from "nuqs";
-import { Suspense, useEffect, useMemo } from "react";
+import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import { Suspense, useMemo } from "react";
 import { FilterBar } from "./components/FilterBar";
 import { NexusGraph } from "./components/NexusGraph";
-import { useNexusGraph } from "./hooks/useNexusGraph";
 import { useNexusFilterOptions } from "./hooks/useNexusFilterOptions";
+import { useNexusGraph } from "./hooks/useNexusGraph";
+
+const defaultDateRange = (() => {
+  const { from, to } = getNexusDefaultDateRange();
+  return { from: toUtcIso(from), to: toUtcIso(to) };
+})();
 
 function NexusContent() {
   // URL state with nuqs
   const [entities, setEntities] = useQueryState(
     "entities",
-    parseAsArrayOf(parseAsString).withDefault([])
+    parseAsArrayOf(parseAsString).withDefault([]),
   );
   const [hsnCodes, setHsnCodes] = useQueryState(
     "hsnCodes",
-    parseAsArrayOf(parseAsString).withDefault([])
+    parseAsArrayOf(parseAsString).withDefault([]),
   );
-  const [fromDateStr, setFromDateStr] = useQueryState("from");
-  const [toDateStr, setToDateStr] = useQueryState("to");
+  const [fromDateStr, setFromDateStr] = useQueryState(
+    "from",
+    parseAsString.withDefault(defaultDateRange.from),
+  );
+  const [toDateStr, setToDateStr] = useQueryState(
+    "to",
+    parseAsString.withDefault(defaultDateRange.to),
+  );
 
   // Convert string dates to Date objects for the date picker
-  const fromDate = fromDateStr ? new Date(fromDateStr) : undefined;
-  const toDate = toDateStr ? new Date(toDateStr) : undefined;
-
-  // Set default dates on first load (last 6 months)
-  useEffect(() => {
-    if (!fromDateStr && !toDateStr) {
-      const { from, to } = getNexusDefaultDateRange();
-      setFromDateStr(toUtcIso(from));
-      setToDateStr(toUtcIso(to));
-    }
-  }, [fromDateStr, toDateStr, setFromDateStr, setToDateStr]);
+  const fromDate = new Date(fromDateStr);
+  const toDate = new Date(toDateStr);
 
   // Fetch filter options
   const { data: filterOptions, isLoading: isFilterOptionsLoading } =
@@ -52,7 +50,7 @@ function NexusContent() {
       fromDate: fromDateStr,
       toDate: toDateStr,
     },
-    shouldFetchGraph
+    shouldFetchGraph,
   );
 
   // Transform entities for the filter (combine all entities from filter options)

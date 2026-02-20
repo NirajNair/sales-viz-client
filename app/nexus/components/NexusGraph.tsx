@@ -26,8 +26,8 @@ type ForceGraphNode = any;
 type ForceGraphLink = any;
 
 // Node dimensions and spacing - increased for better separation
-const NODE_WIDTH = 140;
-const NODE_HEIGHT = 65;
+const NODE_WIDTH = 135;
+const NODE_HEIGHT = 62;
 const NODE_SPACING = 180; // Space between nodes vertically
 const COLUMN_SPACING = 220; // Space between columns horizontally
 const ZONE_SPACING = 800; // Space between selected entity zones
@@ -77,7 +77,7 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
         return links.some(
           (link) =>
             (link.source === selectedNode.id && link.target === node.id) ||
-            (link.target === selectedNode.id && link.source === node.id)
+            (link.target === selectedNode.id && link.source === node.id),
         );
       });
 
@@ -92,7 +92,9 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
           const col = Math.floor(idx / maxNodesPerColumn);
           const row = idx % maxNodesPerColumn;
           const xPos = centerX + SELLER_OFFSET - col * COLUMN_SPACING;
-          const yPos = (row - Math.min(sellers.length, maxNodesPerColumn) / 2 + 0.5) * NODE_SPACING;
+          const yPos =
+            (row - Math.min(sellers.length, maxNodesPerColumn) / 2 + 0.5) *
+            NODE_SPACING;
           nodeMap.set(node.id, {
             ...node,
             x: xPos,
@@ -109,7 +111,9 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
           const col = Math.floor(idx / maxNodesPerColumn);
           const row = idx % maxNodesPerColumn;
           const xPos = centerX + BUYER_OFFSET + col * COLUMN_SPACING;
-          const yPos = (row - Math.min(buyers.length, maxNodesPerColumn) / 2 + 0.5) * NODE_SPACING;
+          const yPos =
+            (row - Math.min(buyers.length, maxNodesPerColumn) / 2 + 0.5) *
+            NODE_SPACING;
           nodeMap.set(node.id, {
             ...node,
             x: xPos,
@@ -125,7 +129,10 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
         if (!nodeMap.has(node.id)) {
           const col = Math.floor(idx / maxNodesPerColumn);
           const row = idx % maxNodesPerColumn;
-          const xPos = centerX + col * COLUMN_SPACING - ((Math.floor(both.length / maxNodesPerColumn) * COLUMN_SPACING) / 2);
+          const xPos =
+            centerX +
+            col * COLUMN_SPACING -
+            (Math.floor(both.length / maxNodesPerColumn) * COLUMN_SPACING) / 2;
           const yPos = BOTH_OFFSET_Y + row * NODE_SPACING;
           nodeMap.set(node.id, {
             ...node,
@@ -147,7 +154,7 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
       const startX = -((totalCols - 1) * COLUMN_SPACING) / 2;
       const xPos = startX + col * COLUMN_SPACING;
       const yPos = BOTH_OFFSET_Y + 400 + row * NODE_SPACING;
-      
+
       nodeMap.set(node.id, {
         ...node,
         x: xPos,
@@ -179,7 +186,7 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
     y: number,
     width: number,
     height: number,
-    radius: number
+    radius: number,
   ) => {
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
@@ -200,11 +207,11 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
       const y = node.y - NODE_HEIGHT / 2;
       const color = getNodeColor(node);
 
-      // Draw shadow
-      ctx.shadowColor = "rgba(0, 0, 0, 0.2)";
-      ctx.shadowBlur = 8;
-      ctx.shadowOffsetX = 2;
-      ctx.shadowOffsetY = 2;
+      // Draw shadow (lighter to not obscure arrows)
+      ctx.shadowColor = "rgba(0, 0, 0, 0.15)";
+      ctx.shadowBlur = 6;
+      ctx.shadowOffsetX = 1;
+      ctx.shadowOffsetY = 1;
 
       // Draw rectangle
       ctx.fillStyle = color;
@@ -249,31 +256,28 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
       ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
       ctx.fillText(node.gstin, node.x, node.y + 12);
     },
-    [getNodeColor]
+    [getNodeColor],
   );
 
   const getNodeId = (node: ForceGraphNode | string): string => {
     return typeof node === "string" ? node : node.id;
   };
 
-  const handleLinkHover = useCallback(
-    (link: ForceGraphLink | null): void => {
-      if (link) {
-        setHoveredLink({
-          link: {
-            source: getNodeId(link.source),
-            target: getNodeId(link.target),
-            hsnDetails: link.hsnDetails || [],
-          },
-          x: 0,
-          y: 0,
-        });
-      } else {
-        setHoveredLink(null);
-      }
-    },
-    []
-  );
+  const handleLinkHover = useCallback((link: ForceGraphLink | null): void => {
+    if (link) {
+      setHoveredLink({
+        link: {
+          source: getNodeId(link.source),
+          target: getNodeId(link.target),
+          hsnDetails: link.hsnDetails || [],
+        },
+        x: 0,
+        y: 0,
+      });
+    } else {
+      setHoveredLink(null);
+    }
+  }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent): void => {
     setHoveredLink((prev) =>
@@ -283,13 +287,13 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
             x: e.clientX + 10,
             y: e.clientY - 10,
           }
-        : null
+        : null,
     );
   }, []);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[800px] rounded-md border bg-card">
+      <div className="flex items-center justify-center h-[90vh] rounded-md border bg-card">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
@@ -297,7 +301,7 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
 
   if (nodes.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[800px] rounded-md border bg-card text-muted-foreground">
+      <div className="flex items-center justify-center h-[90vh] rounded-md border bg-card text-muted-foreground">
         Select entities to view the network graph
       </div>
     );
@@ -306,7 +310,7 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
   return (
     <div
       ref={containerRef}
-      className="relative h-[800px] rounded-md border bg-card overflow-hidden"
+      className="relative h-[90vh] rounded-md border bg-card overflow-hidden"
       onMouseMove={handleMouseMove}
     >
       <ForceGraph2D
@@ -316,7 +320,7 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
         nodePointerAreaPaint={(
           node: ForceGraphNode,
           color: string,
-          ctx: CanvasRenderingContext2D
+          ctx: CanvasRenderingContext2D,
         ) => {
           ctx.fillStyle = color;
           drawRoundedRect(
@@ -325,15 +329,14 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
             node.y - NODE_HEIGHT / 2,
             NODE_WIDTH,
             NODE_HEIGHT,
-            8
+            8,
           );
           ctx.fill();
         }}
-        linkColor={(): string => "#94a3b8"}
-        linkWidth={1.5}
-        linkDirectionalArrowLength={8}
-        linkDirectionalArrowRelPos={0.95}
-        linkDirectionalArrowColor={(): string => "#64748b"}
+        linkColor={(): string => "#64748b"}
+        linkWidth={2.5}
+        linkDirectionalArrowLength={14}
+        linkDirectionalArrowRelPos={0.88}
         backgroundColor="#fafafa"
         onLinkHover={handleLinkHover}
         enableZoomInteraction={true}
@@ -368,7 +371,7 @@ export function NexusGraph({ nodes, links, isLoading }: NexusGraphProps) {
                     </span>
                   )}
                 </div>
-              )
+              ),
             )}
           </div>
         </div>
