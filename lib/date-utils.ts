@@ -28,3 +28,10 @@ export function getDefaultDateRange(): { from: Date; to: Date } {
   const from = subMonths(to, 3);
   return { from, to };
 }
+
+// Get default date range for Nexus (last 6 months)
+export function getNexusDefaultDateRange(): { from: Date; to: Date } {
+  const to = new Date();
+  const from = subMonths(to, 6);
+  return { from, to };
+}

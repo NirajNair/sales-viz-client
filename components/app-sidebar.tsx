@@ -1,6 +1,6 @@
 "use client";
 
-import { History, Table2, Upload } from "lucide-react";
+import { History, Network, Table2, Upload } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -22,6 +22,11 @@ const reportsNavigation = [
     href: "/purchase-records",
     icon: Table2,
     label: "Purchase Records",
+  },
+  {
+    href: "/nexus",
+    icon: Network,
+    label: "Nexus",
   },
 ];
 
