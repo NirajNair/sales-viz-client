@@ -1,10 +1,5 @@
 "use client";
 
-import * as React from "react";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { DateRange } from "react-day-picker";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -12,6 +7,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import * as React from "react";
+import { DateRange } from "react-day-picker";
 
 interface DateRangeFilterProps {
   from: Date | undefined;
@@ -30,14 +30,6 @@ export function DateRangeFilter({
     from,
     to,
   });
-
-  // Use a ref to track if we should close the popover
-  const shouldCloseRef = React.useRef(false);
-
-  React.useEffect(() => {
-    onFromChange(date?.from);
-    onToChange(date?.to);
-  }, [date, onFromChange, onToChange]);
 
   return (
     <div className={cn("grid gap-2 min-w-0")}>
@@ -68,13 +60,19 @@ export function DateRangeFilter({
             </span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
+        <PopoverContent
+          className="w-auto p-0"
+          align="start"
+          onFocusOutside={(e) => e.preventDefault()}
+        >
           <Calendar
             mode="range"
             defaultMonth={date?.from}
             selected={date}
             onSelect={(newDate) => {
               setDate(newDate);
+              onFromChange(newDate?.from);
+              onToChange(newDate?.to);
             }}
             numberOfMonths={2}
             captionLayout="dropdown"
