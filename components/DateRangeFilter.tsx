@@ -26,10 +26,7 @@ export function DateRangeFilter({
   onFromChange,
   onToChange,
 }: DateRangeFilterProps) {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from,
-    to,
-  });
+  const date: DateRange | undefined = from ? { from, to } : undefined;
 
   return (
     <div className={cn("grid gap-2 min-w-0")}>
@@ -70,7 +67,6 @@ export function DateRangeFilter({
             defaultMonth={date?.from}
             selected={date}
             onSelect={(newDate) => {
-              setDate(newDate);
               onFromChange(newDate?.from);
               onToChange(newDate?.to);
             }}

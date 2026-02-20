@@ -1,21 +1,19 @@
 import { config } from "@/lib/config";
 import {
-  GetPurchaseRecordsResponse,
   FilterOptionsResponse,
+  GetPurchaseRecordsResponse,
   PurchaseRecordsQueryState,
 } from "./types";
 
 export async function getPurchaseRecords(
-  params: PurchaseRecordsQueryState
+  params: PurchaseRecordsQueryState,
 ): Promise<GetPurchaseRecordsResponse> {
   const queryParams = new URLSearchParams();
 
-  params.sellers.forEach((id) => queryParams.append("sellerIds", id));
-  params.buyers.forEach((id) => queryParams.append("buyerIds", id));
-  params.hsnCodes.forEach((id) => queryParams.append("hsnIds", id));
-  params.chemicalNames.forEach((name) =>
-    queryParams.append("chemicalNames", name)
-  );
+  queryParams.set("sellerIds", params.sellers.join(","));
+  queryParams.set("buyerIds", params.buyers.join(","));
+  queryParams.set("hsnCodes", params.hsnCodes.join(","));
+  queryParams.set("chemicalNames", params.chemicalNames.join(","));
 
   if (params.fromDate) queryParams.set("fromDate", params.fromDate);
   if (params.toDate) queryParams.set("toDate", params.toDate);
@@ -26,7 +24,7 @@ export async function getPurchaseRecords(
 
   const response = await fetch(
     `${config.apiBaseUrl}/api/purchase-records?${queryParams}`,
-    { headers: { "Content-Type": "application/json" } }
+    { headers: { "Content-Type": "application/json" } },
   );
 
   if (!response.ok) throw new Error("Failed to fetch records");
@@ -36,7 +34,7 @@ export async function getPurchaseRecords(
 export async function getFilterOptions(): Promise<FilterOptionsResponse> {
   const response = await fetch(
     `${config.apiBaseUrl}/api/purchase-records/filter-options`,
-    { headers: { "Content-Type": "application/json" } }
+    { headers: { "Content-Type": "application/json" } },
   );
 
   if (!response.ok) throw new Error("Failed to fetch filter options");
@@ -47,23 +45,21 @@ export async function exportPurchaseRecords(
   params: Omit<
     PurchaseRecordsQueryState,
     "page" | "pageSize" | "sortField" | "sortOrder"
-  >
+  >,
 ): Promise<Blob> {
   const queryParams = new URLSearchParams();
 
-  params.sellers.forEach((id) => queryParams.append("sellerIds", id));
-  params.buyers.forEach((id) => queryParams.append("buyerIds", id));
-  params.hsnCodes.forEach((id) => queryParams.append("hsnIds", id));
-  params.chemicalNames.forEach((name) =>
-    queryParams.append("chemicalNames", name)
-  );
+  queryParams.set("sellerIds", params.sellers.join(","));
+  queryParams.set("buyerIds", params.buyers.join(","));
+  queryParams.set("hsnCodes", params.hsnCodes.join(","));
+  queryParams.set("chemicalNames", params.chemicalNames.join(","));
 
   if (params.fromDate) queryParams.set("fromDate", params.fromDate);
   if (params.toDate) queryParams.set("toDate", params.toDate);
 
   const response = await fetch(
     `${config.apiBaseUrl}/api/purchase-records/export?${queryParams}`,
-    { headers: { "Content-Type": "application/json" } }
+    { headers: { "Content-Type": "application/json" } },
   );
 
   if (!response.ok) throw new Error("Failed to export records");

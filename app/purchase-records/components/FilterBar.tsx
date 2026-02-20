@@ -58,7 +58,7 @@ export function FilterBar({
   onExport,
   isLoading,
 }: FilterBarProps) {
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(true);
 
   return (
     <div className="space-y-3 min-w-0 w-full mb-4">
