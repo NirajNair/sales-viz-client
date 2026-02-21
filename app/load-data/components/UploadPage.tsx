@@ -1,6 +1,6 @@
 "use client";
 
-import { createMappingsFromResponse, getMappings } from "@/lib/api/load-data";
+import { createMappingsFromResponse, getMappings } from "@/app/load-data/api";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useUpload } from "../context/UploadContext";

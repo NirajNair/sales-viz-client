@@ -1,6 +1,7 @@
 "use client";
 
 import { DbFields } from "@/app/enums/db-fields.enum";
+import { loadData } from "@/app/load-data/api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +19,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { loadData } from "@/lib/api/load-data";
 import { DATE_FIELDS, MANDATORY_FIELDS } from "@/lib/constants";
 import {
   DndContext,
@@ -153,7 +153,7 @@ export function MappingPage() {
     onSuccess: (data: LoadDataResponse) => {
       toast.success(`Successfully loaded ${data.recordsStoredCount} records!`);
       setShowConfirmDialog(false);
-      router.push("/uploads");
+      router.push("/purchase-records");
     },
     onError: (error: Error) => {
       toast.error(error.message);

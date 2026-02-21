@@ -1,5 +1,6 @@
 "use client";
 
+import { getUploads, revertUpload } from "@/app/uploads/api";
 import { UploadCard } from "@/app/uploads/components/UploadCard";
 import { FilterStatus } from "@/app/uploads/types";
 import { Input } from "@/components/ui/input";
@@ -10,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { getUploads, revertUpload } from "@/lib/api/uploads";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Search } from "lucide-react";
 import { useState } from "react";
@@ -94,7 +94,9 @@ export default function UploadsPage() {
   return (
     <div className="container w-full">
       <div className="flex items-center gap-4 mb-6">
-        <h1 className="flex-1 text-2xl font-bold text-page-title">Upload History</h1>
+        <h1 className="flex-1 text-2xl font-bold text-page-title">
+          Upload History
+        </h1>
         <div className="relative w-[30%]">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
