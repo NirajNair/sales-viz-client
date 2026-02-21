@@ -20,7 +20,7 @@ export async function getMappings(file: File): Promise<GetMappingsResponse> {
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || "Failed to get mappings");
+    throw new Error(error.error || error.message || "Failed to get mappings");
   }
 
   return response.json();
@@ -41,7 +41,7 @@ export async function loadData(
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || "Failed to load data");
+    throw new Error(error.error || error.message || "Failed to load data");
   }
 
   return response.json();

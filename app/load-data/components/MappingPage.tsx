@@ -155,9 +155,6 @@ export function MappingPage() {
       setShowConfirmDialog(false);
       router.push("/purchase-records");
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
   });
 
   // Validation calculations

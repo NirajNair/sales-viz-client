@@ -1,6 +1,7 @@
 "use client";
 
 import { getDefaultDateRange, toUtcIso } from "@/lib/date-utils";
+import { useMutation } from "@tanstack/react-query";
 import {
   parseAsArrayOf,
   parseAsInteger,
@@ -8,12 +9,11 @@ import {
   useQueryState,
 } from "nuqs";
 import { Suspense, useEffect, useMemo } from "react";
-import { toast } from "sonner";
+import { exportPurchaseRecords } from "./api";
 import { FilterBar } from "./components/FilterBar";
 import { PurchaseRecordsTable } from "./components/PurchaseRecordsTable";
 import { useFilterOptions } from "./hooks/useFilterOptions";
 import { usePurchaseRecords } from "./hooks/usePurchaseRecords";
-import { exportPurchaseRecords } from "./api";
 
 function PurchaseRecordsContent() {
   // URL state with nuqs
@@ -62,23 +62,29 @@ function PurchaseRecordsContent() {
     }
   }, [fromDateStr, toDateStr, setFromDateStr, setToDateStr]);
 
-  // Fetch data
-  const { data, isLoading } = usePurchaseRecords({
-    sellers,
-    buyers,
-    hsnCodes,
-    chemicalNames,
-    fromDate: fromDateStr,
-    toDate: toDateStr,
-    page,
-    pageSize,
-    sortField,
-    sortOrder: sortOrder as "asc" | "desc",
-  });
+  // Fetch filter options FIRST
+  const {
+    data: filterOptions,
+    isLoading: isFilterOptionsLoading,
+    isSuccess: isFilterOptionsSuccess,
+  } = useFilterOptions();
 
-  // Fetch filter options
-  const { data: filterOptions, isLoading: isFilterOptionsLoading } =
-    useFilterOptions();
+  // Fetch data ONLY if filter options succeeded
+  const { data, isLoading } = usePurchaseRecords(
+    {
+      sellers,
+      buyers,
+      hsnCodes,
+      chemicalNames,
+      fromDate: fromDateStr,
+      toDate: toDateStr,
+      page,
+      pageSize,
+      sortField,
+      sortOrder: sortOrder as "asc" | "desc",
+    },
+    isFilterOptionsSuccess,
+  );
 
   // Filter available chemicals based on selected HSN
   const availableChemicals = useMemo(() => {
@@ -126,27 +132,30 @@ function PurchaseRecordsContent() {
     setSortOrder("desc");
   };
 
-  const handleExport = async () => {
-    try {
-      const blob = await exportPurchaseRecords({
-        sellers,
-        buyers,
-        hsnCodes,
-        chemicalNames,
-        fromDate: fromDateStr,
-        toDate: toDateStr,
-      });
-
-      // Download
+  // Export mutation
+  const exportMutation = useMutation({
+    mutationFn: exportPurchaseRecords,
+    onSuccess: (blob) => {
+      // Download the file
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.download = `purchase-records-${new Date().toISOString().split("T")[0]}.csv`;
       link.click();
       URL.revokeObjectURL(url);
-    } catch (error) {
-      toast.error("Failed to export records");
-    }
+    },
+    // Error toast is now handled globally by QueryClient
+  });
+
+  const handleExport = () => {
+    exportMutation.mutate({
+      sellers,
+      buyers,
+      hsnCodes,
+      chemicalNames,
+      fromDate: fromDateStr,
+      toDate: toDateStr,
+    });
   };
 
   const handlePageChange = (newPage: number) => {

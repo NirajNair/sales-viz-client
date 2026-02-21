@@ -23,10 +23,11 @@ export function UploadPage() {
       setCurrentStep(2);
       setUploadingFile(null);
     },
-    onError: (err: Error) => {
-      setError(err.message);
+    onError: (error: Error) => {
+      setError(error.message);
       setUploadingFile(null);
     },
+    meta: { skipToast: true },
   });
 
   const handleFileSelect = (file: File) => {

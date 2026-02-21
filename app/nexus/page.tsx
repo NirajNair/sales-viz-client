@@ -2,7 +2,7 @@
 
 import { getNexusDefaultDateRange, toUtcIso } from "@/lib/date-utils";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
-import { Suspense, useMemo } from "react";
+import { Suspense, useEffect, useMemo } from "react";
 import { FilterBar } from "./components/FilterBar";
 import { NexusGraph } from "./components/NexusGraph";
 import { useNexusFilterOptions } from "./hooks/useNexusFilterOptions";
@@ -23,25 +23,35 @@ function NexusContent() {
     "hsnCodes",
     parseAsArrayOf(parseAsString).withDefault([]),
   );
-  const [fromDateStr, setFromDateStr] = useQueryState(
-    "from",
-    parseAsString.withDefault(defaultDateRange.from),
-  );
-  const [toDateStr, setToDateStr] = useQueryState(
-    "to",
-    parseAsString.withDefault(defaultDateRange.to),
-  );
+  const [fromDateStr, setFromDateStr] = useQueryState("from");
+  const [toDateStr, setToDateStr] = useQueryState("to");
+
+  // Set default dates on first load
+  useEffect(() => {
+    if (!fromDateStr && !toDateStr) {
+      setFromDateStr(defaultDateRange.from);
+      setToDateStr(defaultDateRange.to);
+    }
+  }, [fromDateStr, toDateStr, setFromDateStr, setToDateStr]);
 
   // Convert string dates to Date objects for the date picker
-  const fromDate = new Date(fromDateStr);
-  const toDate = new Date(toDateStr);
+  const fromDate = fromDateStr
+    ? new Date(fromDateStr)
+    : new Date(defaultDateRange.from);
+  const toDate = toDateStr
+    ? new Date(toDateStr)
+    : new Date(defaultDateRange.to);
 
-  // Fetch filter options
-  const { data: filterOptions, isLoading: isFilterOptionsLoading } =
-    useNexusFilterOptions();
+  // Fetch filter options FIRST
+  const {
+    data: filterOptions,
+    isLoading: isFilterOptionsLoading,
+    isSuccess: isFilterOptionsSuccess,
+  } = useNexusFilterOptions();
 
-  // Fetch graph data - only when entities or hsn codes are selected
-  const shouldFetchGraph = entities.length > 0 || hsnCodes.length > 0;
+  // Fetch graph data ONLY if filter options succeeded AND entities or HSN codes are selected
+  const shouldFetchGraph =
+    isFilterOptionsSuccess && (entities.length > 0 || hsnCodes.length > 0);
 
   const { data: graphData, isLoading: isGraphLoading } = useNexusGraph(
     {

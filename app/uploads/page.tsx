@@ -40,9 +40,6 @@ export default function UploadsPage() {
         `Upload reverted successfully. ${count} record${count === 1 ? "" : "s"} deleted.`,
       );
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to revert upload");
-    },
   });
 
   const filteredUploads = uploadsData?.uploads.filter((upload) => {
@@ -80,71 +77,62 @@ export default function UploadsPage() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="container mx-auto py-8 px-4">
-        <h1 className="text-2xl font-bold mb-6 text-page-title">Uploads</h1>
-        <div className="text-red-500">
-          Failed to load uploads: {error.message}
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="container w-full">
-      <div className="flex items-center gap-4 mb-6">
-        <h1 className="flex-1 text-2xl font-bold text-page-title">
-          Upload History
-        </h1>
-        <div className="relative w-[30%]">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search uploads..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+    !error && (
+      <div className="container w-full">
+        <div className="flex items-center gap-4 mb-6">
+          <h1 className="flex-1 text-2xl font-bold text-page-title">
+            Upload History
+          </h1>
+          <div className="relative w-[30%]">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search uploads..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
+          <Select
+            value={filterStatus}
+            onValueChange={(value) => setFilterStatus(value as FilterStatus)}
+          >
+            <SelectTrigger className="w-[180px] capitalize">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(UploadFilters).map((value) => (
+                <SelectItem className="capitalize" value={value}>
+                  {value}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        <Select
-          value={filterStatus}
-          onValueChange={(value) => setFilterStatus(value as FilterStatus)}
-        >
-          <SelectTrigger className="w-[180px] capitalize">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.values(UploadFilters).map((value) => (
-              <SelectItem className="capitalize" value={value}>
-                {value}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <div className="space-y-3">
+          {filteredUploads && filteredUploads.length > 0 ? (
+            filteredUploads.map((upload) => (
+              <UploadCard
+                key={upload.uploadId}
+                upload={upload}
+                onRevert={handleRevert}
+                isReverting={
+                  revertMutation.variables === upload.uploadId &&
+                  revertMutation.isPending
+                }
+              />
+            ))
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              {searchQuery || filterStatus !== "all"
+                ? "No uploads match your filters"
+                : "No uploads found"}
+            </div>
+          )}
+        </div>
       </div>
-
-      <div className="space-y-3">
-        {filteredUploads && filteredUploads.length > 0 ? (
-          filteredUploads.map((upload) => (
-            <UploadCard
-              key={upload.uploadId}
-              upload={upload}
-              onRevert={handleRevert}
-              isReverting={
-                revertMutation.variables === upload.uploadId &&
-                revertMutation.isPending
-              }
-            />
-          ))
-        ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            {searchQuery || filterStatus !== "all"
-              ? "No uploads match your filters"
-              : "No uploads found"}
-          </div>
-        )}
-      </div>
-    </div>
+    )
   );
 }
