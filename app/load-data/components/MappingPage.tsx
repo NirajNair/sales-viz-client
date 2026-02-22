@@ -54,14 +54,19 @@ function getAllMappedFields(mappings: ColumnMapping[]): Set<string> {
   const mappedFields = new Set<string>();
 
   mappings.forEach((m) => {
-    if (m.mappedTo) {
-      mappedFields.add(m.mappedTo);
-    }
-    m.parts.forEach((part) => {
-      if (part.mapTo) {
-        mappedFields.add(part.mapTo);
+    if (m.shouldSplit) {
+      // For split columns, only count part mappings
+      m.parts.forEach((part) => {
+        if (part.mapTo) {
+          mappedFields.add(part.mapTo);
+        }
+      });
+    } else {
+      // For non-split columns, only count the main mapping
+      if (m.mappedTo) {
+        mappedFields.add(m.mappedTo);
       }
-    });
+    }
   });
 
   return mappedFields;
@@ -72,14 +77,19 @@ function getDuplicateFields(mappings: ColumnMapping[]): string[] {
   const fieldCount = new Map<string, number>();
 
   mappings.forEach((m) => {
-    if (m.mappedTo) {
-      fieldCount.set(m.mappedTo, (fieldCount.get(m.mappedTo) || 0) + 1);
-    }
-    m.parts.forEach((part) => {
-      if (part.mapTo) {
-        fieldCount.set(part.mapTo, (fieldCount.get(part.mapTo) || 0) + 1);
+    if (m.shouldSplit) {
+      // For split columns, only count part mappings
+      m.parts.forEach((part) => {
+        if (part.mapTo) {
+          fieldCount.set(part.mapTo, (fieldCount.get(part.mapTo) || 0) + 1);
+        }
+      });
+    } else {
+      // For non-split columns, only count the main mapping
+      if (m.mappedTo) {
+        fieldCount.set(m.mappedTo, (fieldCount.get(m.mappedTo) || 0) + 1);
       }
-    });
+    }
   });
 
   return Array.from(fieldCount.entries())
@@ -318,14 +328,19 @@ export function MappingPage() {
   const getUsedFields = (): string[] => {
     const used: string[] = [];
     mappings.forEach((m) => {
-      if (m.mappedTo) {
-        used.push(m.mappedTo);
-      }
-      m.parts.forEach((part) => {
-        if (part.mapTo) {
-          used.push(part.mapTo);
+      if (m.shouldSplit) {
+        // For split columns, only count part mappings
+        m.parts.forEach((part) => {
+          if (part.mapTo) {
+            used.push(part.mapTo);
+          }
+        });
+      } else {
+        // For non-split columns, only count the main mapping
+        if (m.mappedTo) {
+          used.push(m.mappedTo);
         }
-      });
+      }
     });
     return used;
   };

@@ -77,9 +77,9 @@ export function createMappingsFromResponse(
         sampleValue: column.sampleValue,
         shouldSplit: shouldSplit,
         delimiter: delimiter,
-        mappedTo: suggestion.suggestion.mapTo,
+        mappedTo: shouldSplit ? null : suggestion.suggestion.mapTo,
         dateFormat: null,
-        parts: parts,
+        parts: shouldSplit ? parts : [],
       };
     }
 
